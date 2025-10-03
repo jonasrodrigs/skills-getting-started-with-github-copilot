@@ -1,9 +1,4 @@
-"""
-High School Management System API
 
-A super simple FastAPI application that allows students to view and sign up
-for extracurricular activities at Mergington High School.
-"""
 
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
@@ -38,9 +33,47 @@ activities = {
         "schedule": "Mondays, Wednesdays, Fridays, 2:00 PM - 3:00 PM",
         "max_participants": 30,
         "participants": ["john@mergington.edu", "olivia@mergington.edu"]
+    },
+    # Atividades esportivas adicionais
+    "Basketball Team": {
+        "description": "Practice and compete in basketball tournaments",
+        "schedule": "Wednesdays, 4:00 PM - 6:00 PM",
+        "max_participants": 15,
+        "participants": []
+    },
+    "Swimming Club": {
+        "description": "Swimming lessons and competitions",
+        "schedule": "Saturdays, 10:00 AM - 12:00 PM",
+        "max_participants": 20,
+        "participants": []
+    },
+    # Atividades artísticas adicionais
+    "Drama Club": {
+        "description": "Acting, stage production, and theater performances",
+        "schedule": "Thursdays, 5:00 PM - 7:00 PM",
+        "max_participants": 25,
+        "participants": []
+    },
+    "Painting Workshop": {
+        "description": "Learn painting techniques and create art projects",
+        "schedule": "Mondays, 4:00 PM - 6:00 PM",
+        "max_participants": 18,
+        "participants": []
+    },
+    # Atividades intelectuais adicionais
+    "Math Olympiad": {
+        "description": "Prepare for math competitions and problem-solving sessions",
+        "schedule": "Tuesdays, 5:00 PM - 6:30 PM",
+        "max_participants": 20,
+        "participants": []
+    },
+    "Science Club": {
+        "description": "Experiments, science fairs, and research projects",
+        "schedule": "Fridays, 4:00 PM - 5:30 PM",
+        "max_participants": 22,
+        "participants": []
     }
 }
-
 
 @app.get("/")
 def root():
@@ -51,7 +84,7 @@ def root():
 def get_activities():
     return activities
 
-
+# Validate student is not already signed up
 @app.post("/activities/{activity_name}/signup")
 def signup_for_activity(activity_name: str, email: str):
     """Sign up a student for an activity"""
@@ -62,6 +95,11 @@ def signup_for_activity(activity_name: str, email: str):
     # Get the specific activity
     activity = activities[activity_name]
 
+    # Validate student is not already signed up
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Student is already signed up")
+
     # Add student
     activity["participants"].append(email)
-    return {"message": f"Signed up {email} for {activity_name}"}
+    return {"message": f"Signed up {email} for {activity_name}"}   
+        
